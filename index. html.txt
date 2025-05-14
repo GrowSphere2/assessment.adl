@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ADL Assessment Form</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+      background: #f9f9f9;
+    }
+    h2 {
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+    }
+    label {
+      display: block;
+      margin: 8px 0 4px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+    textarea {
+      resize: vertical;
+    }
+    .section {
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    button {
+      background: #28a745;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Activities of Daily Living (ADL) Assessment</h1>
+
+  <form id="adlForm">
+    <div class="section">
+      <h2>Client Info</h2>
+      <label>Client Initials:</label>
+      <input type="text" name="client_initials" required />
+      <label>Date:</label>
+      <input type="date" name="date" required />
+      <label>Age Group:</label>
+      <select name="age_group" required>
+        <option value="">Select Age Group</option>
+        <option>Infant</option>
+        <option>Toddler</option>
+        <option>Child</option>
+        <option>Teen</option>
+        <option>Young Adult</option>
+      </select>
+    </div>
+
+    <div class="section">
+      <h2>Dressing</h2>
+      <label>Can the client dress independently?</label>
+      <select name="dressing_independence">
+        <option>Yes</option>
+        <option>No</option>
+      </select>
+      <label>Notes/Comments:</label>
+      <textarea name="dressing_notes"></textarea>
+    </div>
+
+    <!-- Add more sections as needed, just like above -->
+
+    <button type="submit">Generate PDF</button>
+  </form>
+
+  <script>
+    document.getElementById('adlForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      let y = 10;
+      const formData = new FormData(this);
+      doc.setFontSize(14);
+      doc.text("ADL Assessment Report", 10, y);
+      y += 10;
+
+      formData.forEach((value, key) => {
+        const text = `${key.replace(/_/g, ' ')}: ${value}`;
+        const lines = doc.splitTextToSize(text, 180);
+        doc.text(lines, 10, y);
+        y += lines.length * 8;
+        if (y > 270) {
+          doc.addPage();
+          y = 10;
+        }
+      });
+
+      doc.save('ADL_Assessment.pdf');
+    });
+  </script>
+
+</body>
+</html>
